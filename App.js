@@ -1,21 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import * as Font from "expo-font";
+import AppLoading from 'expo-app-loading';
+import MainLayout from './src/layouts/MainLayout';
+import TodoState from "./src/context/todo/TodoState";
+import ScreenState from './src/context/screen/ScreenState';
 
 export default function App() {
+  const [isReady, setIsReady] = useState(false);
+
+  async function loadApp() {
+    await Font.loadAsync({
+      'roboto-regular': require("./assets/fonts/Roboto-Regular.ttf"),
+      'roboto-bold': require("./assets/fonts/Roboto-Bold.ttf")
+    });
+  }
+
+  if(!isReady) {
+    return(
+      <AppLoading 
+        startAsync={loadApp} 
+        onFinish={() => setIsReady(true)} 
+        onError={(err) => console.log(err)} />
+    ); 
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ScreenState>
+      <TodoState>
+          <MainLayout />
+      </TodoState>
+    </ScreenState>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
